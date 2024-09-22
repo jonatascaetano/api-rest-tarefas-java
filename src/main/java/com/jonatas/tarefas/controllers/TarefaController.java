@@ -3,8 +3,13 @@ package com.jonatas.tarefas.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.jonatas.tarefas.models.Tarefa;
 
+@RestController
+@RequestMapping(value = "/tarefas")
 public class TarefaController {
 
     List<Tarefa> tarefas = new ArrayList<>();
