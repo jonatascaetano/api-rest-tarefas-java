@@ -1,9 +1,15 @@
 package com.jonatas.tarefas.controllers;
 
+import java.io.ObjectInputFilter.Status;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +30,15 @@ public class TarefaController {
     @GetMapping()
     public List<Tarefa> getTarefas(){
         return tarefas;
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Tarefa> getTarefaById(@PathVariable int id){
+        var tarefa = tarefas.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
+        if(tarefa == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(tarefa);
     }
     
 }
