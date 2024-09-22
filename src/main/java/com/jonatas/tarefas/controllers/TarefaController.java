@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,5 +58,18 @@ public class TarefaController {
         } while (tarefa != null);
 
         return novoId;
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Tarefa> putTarefa(@PathVariable int id, @RequestBody Tarefa obj) {
+        var tarefa = tarefas.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
+        if (tarefa == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        tarefa.setTitle(obj.getTitle());
+        tarefa.setBody(obj.getBody());
+        tarefa.setDone(obj.isDone());
+
+        return ResponseEntity.status(HttpStatus.OK).body(tarefa);
     }
 }
