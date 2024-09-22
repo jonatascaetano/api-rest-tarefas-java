@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,4 +73,19 @@ public class TarefaController {
 
         return ResponseEntity.status(HttpStatus.OK).body(tarefa);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteTarefa(@PathVariable int id) {
+        var tarefa = tarefas.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
+        if (tarefa != null) {
+            tarefas.remove(tarefa);
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    
+
 }
