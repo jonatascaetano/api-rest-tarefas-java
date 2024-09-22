@@ -1,7 +1,9 @@
 package com.jonatas.tarefas.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,13 @@ import com.jonatas.tarefas.models.Tarefa;
 public class TarefaController {
 
     List<Tarefa> tarefas = new ArrayList<>();
+    Map<String, String> error = new HashMap<>();
 
     public TarefaController() {
         tarefas.add(new Tarefa(1, "Tarefa", "Comprar verduras na promoção de quarta-feira", false));
         tarefas.add(new Tarefa(2, "Fazer a tarefa da faculdade", "terminar a tarefa de java", false));
+        error.put("error", "Tarefa não encontrada");
+
     }
 
     @GetMapping()
@@ -34,10 +39,10 @@ public class TarefaController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Tarefa> getTarefaById(@PathVariable int id) {
+    public ResponseEntity<Object> getTarefaById(@PathVariable int id) {
         var tarefa = tarefas.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
         if (tarefa == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
         return ResponseEntity.ok(tarefa);
     }
@@ -62,10 +67,10 @@ public class TarefaController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Tarefa> putTarefa(@PathVariable int id, @RequestBody Tarefa obj) {
+    public ResponseEntity<Object> putTarefa(@PathVariable int id, @RequestBody Tarefa obj) {
         var tarefa = tarefas.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
         if (tarefa == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
         tarefa.setTitle(obj.getTitle());
         tarefa.setBody(obj.getBody());
@@ -75,17 +80,16 @@ public class TarefaController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteTarefa(@PathVariable int id) {
+    public ResponseEntity<Object> deleteTarefa(@PathVariable int id) {
         var tarefa = tarefas.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
         if (tarefa != null) {
             tarefas.remove(tarefa);
-        }else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-    
 
 }
